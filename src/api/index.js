@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const baseURL = 'http://localhost:4000';
+export const baseURL = 'https://express-js-woo9.vercel.app';
 
 export const instance = axios.create({
     baseURL: baseURL,

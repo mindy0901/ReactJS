@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Container, MenuItem, Paper, TextField, Typography } from '@mui/material';
-import { baseURL, createProduct, getProducts } from '../api';
+import { createProduct, getProducts } from '../api';
 import { useMutation, useQuery } from 'react-query';
-import io from 'socket.io-client';
-
-const socket = io(baseURL);
 
 const ProductsPage = () => {
     const [form, setForm] = useState({
@@ -17,34 +14,6 @@ const ProductsPage = () => {
     const mutation = useMutation((form) => {
         return createProduct(form);
     });
-
-    const [isConnected, setIsConnected] = useState(socket.connected);
-    const [lastPong, setLastPong] = useState(null);
-    console.log(lastPong);
-
-    useEffect(() => {
-        socket.on('connect', () => {
-            setIsConnected(true);
-        });
-
-        socket.on('disconnect', () => {
-            setIsConnected(false);
-        });
-
-        socket.on('pong', () => {
-            setLastPong(new Date().toISOString());
-        });
-
-        return () => {
-            socket.off('connect');
-            socket.off('disconnect');
-            socket.off('pong');
-        };
-    }, []);
-
-    const sendPing = () => {
-        socket.emit('ping');
-    };
 
     const handleCreateProduct = () => {
         mutation.mutate(form);
@@ -111,11 +80,6 @@ const ProductsPage = () => {
                     </TextField>
                 </Box>
                 <Button onClick={handleCreateProduct}>Create Product</Button>
-                <div>
-                    <p>Connected: {'' + isConnected}</p>
-                    <p>Last pong: {lastPong || '-'}</p>
-                    <button onClick={sendPing}>Send ping</button>
-                </div>
             </Paper>
 
             <Paper sx={{ flex: 1, borderRadius: 2, overflow: 'hidden' }}>
